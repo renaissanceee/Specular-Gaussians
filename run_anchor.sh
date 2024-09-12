@@ -22,4 +22,7 @@ export PYTHONPATH=
 source /cluster/work/cvl/jiezcao/jiameng/Spec-Gaussian/env/bin/activate
 # ZoomGS
 python train_anchor_zoomgs.py -s ../ZoomGS/ZoomGS/zoomgs_dataset/01 -m ckpt/zoomgs/01 --eval --dataset_split 10 --voxel_size 0.001 --update_init_factor 16
-python train_anchor_zoomgs.py -s ../3D-Gaussian/nerf_synthetic/hotdog -m ckpt/syntheyic/hotdog --eval --dataset_split 100 --voxel_size 0.001 --update_init_factor 16
+python train_anchor_zoomgs.py -s ../3D-Gaussian/nerf_synthetic/hotdog -m ckpt/synthetic/hotdog --white_background --eval --dataset_split 100 --voxel_size 0.001 --update_init_factor 16
+
+python zoomgs_test.py -m ckpt/zoomgs/01
+python render_anchor.py -m ckpt/syntheyic/hotdog --white_background --skip_train

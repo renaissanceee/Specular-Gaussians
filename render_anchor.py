@@ -30,11 +30,11 @@ import imageio
 def render_set(model_path, name, iteration, views, gaussians, pipeline, background):
     render_path = os.path.join(model_path, name, "ours_{}".format(iteration), "renders")
     gts_path = os.path.join(model_path, name, "ours_{}".format(iteration), "gt")
-    depth_path = os.path.join(model_path, name, "ours_{}".format(iteration), "depth")
+    # depth_path = os.path.join(model_path, name, "ours_{}".format(iteration), "depth")
 
     makedirs(render_path, exist_ok=True)
     makedirs(gts_path, exist_ok=True)
-    makedirs(depth_path, exist_ok=True)
+    # makedirs(depth_path, exist_ok=True)
 
     t_list = []
     for idx, view in enumerate(tqdm(views, desc="Rendering progress")):
@@ -42,11 +42,11 @@ def render_set(model_path, name, iteration, views, gaussians, pipeline, backgrou
         render_pkg = anchor_render(view, gaussians, pipeline, background, visible_mask=voxel_visible_mask)
         rendering = render_pkg["render"]
         gt = view.original_image[0:3, :, :]
-        depth = render_pkg["depth"]
-        depth = depth / (depth.max() + 1e-5)
-        torchvision.utils.save_image(rendering, os.path.join(render_path, '{0:05d}'.format(idx) + ".png"))
-        torchvision.utils.save_image(gt, os.path.join(gts_path, '{0:05d}'.format(idx) + ".png"))
-        torchvision.utils.save_image(depth, os.path.join(depth_path, '{0:05d}'.format(idx) + ".png"))
+        # depth = render_pkg["depth"]
+        # depth = depth / (depth.max() + 1e-5)
+        torchvision.utils.save_image(rendering, os.path.join(render_path, view.image_name + ".png"))
+        torchvision.utils.save_image(gt, os.path.join(gts_path, view.image_name + ".png"))
+        # torchvision.utils.save_image(depth, os.path.join(depth_path, view.image_name + ".png"))
 
     for idx, view in enumerate(tqdm(views, desc="Rendering progress")):
         torch.cuda.synchronize();
