@@ -180,10 +180,20 @@ def readColmapSceneInfo(path, images, eval, llffhold=8):
     cam_infos_unsorted = readColmapCameras(cam_extrinsics=cam_extrinsics, cam_intrinsics=cam_intrinsics,
                                            images_folder=os.path.join(path, reading_dir))
     cam_infos = sorted(cam_infos_unsorted.copy(), key=lambda x: x.image_name)
-
+    "mip-nerf 360"
+    # if eval:
+    #     train_cam_infos = [c for idx, c in enumerate(cam_infos) if idx % llffhold != 0]
+    #     test_cam_infos = [c for idx, c in enumerate(cam_infos) if idx % llffhold == 0]
+    "ZoomGS"
     if eval:
-        train_cam_infos = [c for idx, c in enumerate(cam_infos) if idx % llffhold != 0]
-        test_cam_infos = [c for idx, c in enumerate(cam_infos) if idx % llffhold == 0]
+        eval_index = [2, 5, 8, 11, 14, 17, 20, 23, 26, 29]
+        test_cam_infos = []
+        train_cam_infos = []
+        for idx, c in enumerate(cam_infos):
+            if (idx) in eval_index:
+                test_cam_infos.append(c)
+            else:
+                train_cam_infos.append(c)
     else:
         train_cam_infos = cam_infos
         test_cam_infos = []
@@ -243,13 +253,6 @@ def readCamerasFromTransforms(path, transformsfile, white_background, extension=
             arr = norm_data[:, :, :3] * norm_data[:, :, 3:4] + bg * (1 - norm_data[:, :, 3:4])
             image = Image.fromarray(np.array(arr * 255.0, dtype=np.byte), "RGB")
 
-            # if "train" in transformsfile:
-            #     normal_path = os.path.join(path, frame["file_path"] + "_normal.png")
-            #     normal_raw = (imageio.imread(normal_path) / 255.0)
-            #     normal = normal_raw[..., :3] * norm_data[:, :, 3:4] + bg * (1 - norm_data[..., 3:4])
-            # else:
-            #     normal = None
-
             fovy = focal2fov(fov2focal(fovx, image.size[0]), image.size[1])
             FovY = fovx
             FovX = fovy
@@ -265,8 +268,15 @@ def readNerfSyntheticInfo(path, white_background, eval, read_val=False, extensio
     try:
         print("Reading Training Transforms")
         train_cam_infos = readCamerasFromTransforms(path, "transforms_train.json", white_background, extension)
+        print("Reading Near-Train Transforms")
+        near_cam_infos = readCamerasFromTransforms(os.path.join(path, "near_z_2"), "updated_transforms_train.json",
+                                                   white_background, extension)
+        train_cam_infos = train_cam_infos + near_cam_infos
+        # -----------------------------------------------
         print("Reading Test Transforms")
-        test_cam_infos = readCamerasFromTransforms(path, "transforms_test.json", white_background, extension)
+        # test_cam_infos = readCamerasFromTransforms(path, "transforms_test.json", white_background, extension)
+        test_cam_infos = readCamerasFromTransforms(os.path.join(path, "near_z_2"), "updated_transforms_test.json",
+                                                   white_background, extension)
 
         if not eval:
             train_cam_infos.extend(test_cam_infos)

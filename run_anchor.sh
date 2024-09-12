@@ -13,3 +13,13 @@ python train_anchor.py -s /media/data_nix/yzy/Git_Project/data/tandt_db/tandt/tr
 
 python train_anchor.py -s /media/data_nix/yzy/Git_Project/data/tandt_db/db/drjohnson -m outputs/db/drjohnson --eval --voxel_size 0.005 --update_init_factor 16 --iterations 30_000 --use_c2f
 python train_anchor.py -s /media/data_nix/yzy/Git_Project/data/tandt_db/db/playroom -m outputs/db/playroom --eval --voxel_size 0.005 --update_init_factor 16 --iterations 30_000 --use_c2f
+# ------------------------
+module load stack/.2024-04-silent
+module load gcc/8.5.0
+module load python/3.9
+module load cuda/11.8
+export PYTHONPATH=
+source /cluster/work/cvl/jiezcao/jiameng/Spec-Gaussian/env/bin/activate
+# ZoomGS
+python train_anchor_zoomgs.py -s ../ZoomGS/ZoomGS/zoomgs_dataset/01 -m ckpt/zoomgs/01 --eval --dataset_split 10 --voxel_size 0.001 --update_init_factor 16
+python train_anchor_zoomgs.py -s ../3D-Gaussian/nerf_synthetic/hotdog -m ckpt/syntheyic/hotdog --eval --dataset_split 100 --voxel_size 0.001 --update_init_factor 16

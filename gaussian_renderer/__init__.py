@@ -202,8 +202,12 @@ def generate_neural_gaussians(viewpoint_camera, pc: AnchorGaussianModel, visible
     ob_dist = ob_view.norm(dim=1, keepdim=True)
     # view
     ob_view = ob_view / ob_dist
-
+    # default: dist
     cat_local_view = torch.cat([feat, ob_view, ob_dist], dim=1)  # [N, c+3]
+    # # option1: center
+    # cat_local_view = torch.cat([feat, ob_view, viewpoint_camera.camera_center], dim=1)
+    # # option2: center
+    # cat_local_view = torch.cat([feat, ob_view, binary], dim=1)
 
     # get offset's opacity
     neural_opacity = pc.get_opacity_mlp(cat_local_view)  # [N, k]
